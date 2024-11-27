@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXE Lernplattform - Level 2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Level 2: Billion Laugh Angriff</h1>
+    <p>In diesem Level wirst du lernen, wie der Billion Laugh Angriff einen Denial-of-Service (DoS) auslösen kann.</p>
+
+    <h2>Deine Aufgabe</h2>
+    <p>Füge den fehlenden Teil im XML-Code ein, um den Angriff erfolgreich auszuführen:</p>
+    <textarea id="xmlInput2" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+
+    <!-- Tipps -->
+    <h3>Tipps</h3>
+    <button id="tip1">Tipp 1</button>
+    <button id="tip2">Tipp 2</button>
+    <button id="tip3">Tipp 3</button>
+    <div id="tip1-box" style="display:none;">Der Angriff nutzt rekursive Entitäten.</div>
+    <div id="tip2-box" style="display:none;">Definiere die Entitäten korrekt: <code>&lt;!ENTITY lol4 ...&gt;</code>.</div>
+    <div id="tip3-box" style="display:none;">Achte auf die Reihenfolge der Verschachtelung.</div>
+
+    <!-- Angriff starten -->
+    <button id="runAttackBtnLevel2">Angriff starten</button>
+
+    <!-- Ergebnis -->
+    <h3>Angriffsoutput:</h3>
+    <pre id="resultLevel2"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

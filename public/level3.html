@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXE Lernplattform - Level 3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Level 3: SSRF Angriff mit XXE</h1>
+    <p>In diesem Level wirst du lernen, wie ein SSRF Angriff mithilfe von XXE funktioniert.</p>
+
+    <h2>Deine Aufgabe</h2>
+    <p>Definiere eine externe Entität, die auf eine URL verweist, um einen SSRF Angriff auszuführen:</p>
+    <textarea id="xmlInput3" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+
+    <!-- Tipps -->
+    <h3>Tipps</h3>
+    <button id="tip1">Tipp 1</button>
+    <button id="tip2">Tipp 2</button>
+    <button id="tip3">Tipp 3</button>
+    <div id="tip1-box" style="display:none;">Der SSRF Angriff nutzt externe URLs.</div>
+    <div id="tip2-box" style="display:none;">Syntax: <code>&lt;!ENTITY ssrf SYSTEM "URL"&gt;</code>.</div>
+    <div id="tip3-box" style="display:none;">Ziel ist <code>http://internal-system.local/admin</code>.</div>
+
+    <!-- Angriff starten -->
+    <button id="runAttackBtnLevel3">Angriff starten</button>
+
+    <!-- Ergebnis -->
+    <h3>Ergebnisse:</h3>
+    <pre id="resultLevel3"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>

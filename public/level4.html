@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXE Lernplattform - Level 4</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Level 4: Remote Code Execution (RCE) Angriff</h1>
+    <p>In diesem Level wirst du lernen, wie eine externe Entität verwendet wird, um Code auszuführen oder auf eine schädliche Ressource zuzugreifen.</p>
+
+    <!-- Aufgabe -->
+    <h2>Deine Aufgabe</h2>
+    <p>Definiere eine externe Entität, die auf die URL <code>http://attacker.com/malicious_script.php</code> verweist.</p>
+    <textarea id="xmlInput4" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+
+    <!-- Tipps -->
+    <h3>Tipps</h3>
+    <button id="tip1">Tipp 1</button>
+    <button id="tip2">Tipp 2</button>
+    <button id="tip3">Tipp 3</button>
+    <div id="tip1-box" style="display:none;">Ein RCE Angriff lädt externen Code von einer URL.</div>
+    <div id="tip2-box" style="display:none;">Syntax für die Entität: <code>&lt;!ENTITY name SYSTEM "URL"&gt;</code>.</div>
+    <div id="tip3-box" style="display:none;">Nutze die URL: <code>http://attacker.com/malicious_script.php</code>.</div>
+
+    <!-- Angriff starten -->
+    <button id="runAttackBtnLevel4">Angriff starten</button>
+
+    <!-- Ergebnis -->
+    <h3>Angriffsoutput:</h3>
+    <pre id="resultLevel4"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>

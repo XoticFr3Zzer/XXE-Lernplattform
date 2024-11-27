@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXE Lernplattform - Level 1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Level 1: Einführung in XXE</h1>
+    <p>In diesem Level wirst du lernen, was externe Entitäten sind und wie sie für Angriffe genutzt werden können.</p>
+
+    <!-- Schritt 1 -->
+    <h2>Schritt 1: Was sind externe Entitäten?</h2>
+    <p>Externe Entitäten in XML ermöglichen es, Daten von außerhalb eines XML-Dokuments zu referenzieren. Dies kann für legitime Zwecke, aber auch für Angriffe genutzt werden.</p>
+
+    <!-- Schritt 2 -->
+    <h2>Schritt 2: Definiere eine externe Entität</h2>
+    <p>Im folgendem Beispiel siehst du, wie die Entität <code>&ext;</code> so definiert wird, dass sie auf die Datei <code>/etc/passwd</code> verweist.</p>
+    <textarea id="xmlInput1" rows="10" cols="50">
+<?xml version="1.0"?>
+<!DOCTYPE exploit [
+    <!ENTITY ext SYSTEM "file:///etc/passwd">
+]>
+<request>&ext;</request>
+    </textarea>
+
+    <!-- Angriff starten -->
+    <button id="runAttackBtnLevel1">Angriff starten</button>
+
+    <!-- Ausgabe -->
+    <h2>Schritt 3: Ergebnis des Angriffs</h2>
+    <p>Die Datei <code>/etc/passwd</code> enthält kritische Informationen, wie Benutzernamen und IDs. Die Ergebnisse des Angriffs werden hier angezeigt:</p>
+    <pre id="resultLevel1"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>

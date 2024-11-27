@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXE Lernplattform - Level 5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Level 5: Sicherheitsmaßnahmen gegen XXE</h1>
+    <p>Zeige dein Wissen über XXE-Sicherheitsmaßnahmen, indem du drei verschiedene Abwehrmethoden nennst.</p>
+
+    <!-- Aufgabe -->
+    <h2>Deine Aufgabe</h2>
+    <p>Gib drei Abwehrmethoden gegen XXE-Angriffe an:</p>
+
+    <!-- Eingabefelder -->
+    <label for="answer1">Abwehrmethode 1:</label>
+    <input type="text" id="answer1" placeholder="Erste Abwehrmethode"><br>
+
+    <label for="answer2">Abwehrmethode 2:</label>
+    <input type="text" id="answer2" placeholder="Zweite Abwehrmethode"><br>
+
+    <label for="answer3">Abwehrmethode 3:</label>
+    <input type="text" id="answer3" placeholder="Dritte Abwehrmethode"><br>
+
+    <!-- Tipps -->
+    <h3>Tipps</h3>
+    <button id="tip1">Tipp 1</button>
+    <button id="tip2">Tipp 2</button>
+    <button id="tip3">Tipp 3</button>
+    <div id="tip1-box" style="display:none;">Deaktiviere die Verarbeitung von externen Entitäten in deinem XML-Parser.</div>
+    <div id="tip2-box" style="display:none;">Validiere alle XML-Eingaben gründlich, bevor sie verarbeitet werden.</div>
+    <div id="tip3-box" style="display:none;">Verwende sichere Alternativen wie JSON anstelle von XML.</div>
+
+    <!-- Überprüfungsbutton -->
+    <button id="runAttackBtnLevel5">Überprüfung starten</button>
+
+    <!-- Ergebnis -->
+    <h3>Ergebnisse:</h3>
+    <pre id="resultLevel5"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>
