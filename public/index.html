@@ -7,18 +7,137 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Willkommen zur XXE Lernplattform</h1>
-    <p>Hier kannst du die Grundlagen von XXE-Angriffen üben. Wähle ein Level aus, um zu starten!</p>
+    <!-- Punkteanzeige oben rechts -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
 
-    <!-- Level-Links -->
-    <ul>
-        <li><a href="level1.html" id="level1-link">Level 1: Einführung in XXE</a></li>
-        <li><a href="level2.html" id="level2-link">Level 2: Billion Laugh Angriff</a></li>
-        <li><a href="level3.html" id="level3-link">Level 3: SSRF Angriff</a></li>
-        <li><a href="level4.html" id="level4-link">Level 4: Remote Code Execution</a></li>
-        <li><a href="level5.html" id="level5-link">Level 5: Sicherheitsmaßnahmen</a></li>
-    </ul>
+    <div id="mainContainer" style="margin: 20px;">
+        <h1>Willkommen zur XXE Lernplattform!</h1>
+        <p>Hier kannst du mehr über XXE-Angriffe lernen und wie du dich dagegen schützen kannst. Schließe die Level ab und sammle Punkte!</p>
 
-    <script src="script.js"></script>
+        <!-- Level-Auswahl -->
+        <h2>Level</h2>
+        <ul style="list-style-type: none; padding: 0;">
+            <li><a href="level1.html" id="level1Link" class="levelLink" style="display: block; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none;">Level 1: Einführung in XXE</a></li>
+            <li><a href="level2.html" id="level2Link" class="levelLink" style="display: block; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none;">Level 2: Billion Laugh Angriff</a></li>
+            <li><a href="level3.html" id="level3Link" class="levelLink" style="display: block; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none;">Level 3: SSRF Angriff mit XXE</a></li>
+            <li><a href="level4.html" id="level4Link" class="levelLink" style="display: block; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none;">Level 4: Sicherheitsmaßnahmen gegen XXE</a></li>
+            <li><a href="level5.html" id="level5Link" class="levelLink" style="display: block; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none;">Level 5: Sicherheitsmaßnahmen im Parser</a></li>
+        </ul>
+
+        <!-- Achievement-Anzeige -->
+        <h2>Achievements</h2>
+        <div id="achievementContainer" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+            <div class="achievement" id="achievement1" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Aller Anfang ist schwer</strong>
+                <p>Der Nutzer hat das erste Level abgeschlossen.</p>
+            </div>
+            <div class="achievement" id="achievement2" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Wer zuletzt lacht</strong>
+                <p>Der Nutzer hat das zweite Level abgeschlossen.</p>
+            </div>
+            <div class="achievement" id="achievement3" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>SSRF Meister</strong>
+                <p>Der Nutzer hat das dritte Level abgeschlossen.</p>
+            </div>
+            <div class="achievement" id="achievement4" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Sicherheitsexperte</strong>
+                <p>Der Nutzer hat das vierte Level abgeschlossen.</p>
+            </div>
+            <div class="achievement" id="achievement5" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Gib XXE keine Chance</strong>
+                <p>Der Nutzer hat das fünfte Level abgeschlossen.</p>
+            </div>
+            <div class="achievement" id="achievement6" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Dozent Liebling</strong>
+                <p>Der Nutzer hat die maximale Punktzahl erreicht.</p>
+            </div>
+            <div class="achievement" id="achievement7" style="width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <strong>Sammelmeister</strong>
+                <p>Der Nutzer hat alle Achievements gesammelt.</p>
+            </div>
+        </div>
+
+        <!-- Reset-Knopf -->
+        <button id="resetPlatform" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #dc3545; color: white; border: none; border-radius: 5px;">
+            Plattform zurücksetzen
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            // Punkteanzeige aktualisieren
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                 }
+
+                 if (score === 500) { // Angenommene maximale Punktzahl
+                    localStorage.setItem('achievement6', 'true'); // "Dozent Liebling" Achievement freischalten
+                 }
+            }
+
+            // Achievements aktualisieren
+            function updateAchievements() {
+                 document.querySelectorAll('.achievement').forEach(achievement => {
+                            const achievementId = achievement.id; // Beispiel: "achievement1"
+                            if (localStorage.getItem(achievementId) === 'true') {
+                                achievement.style.backgroundColor = '#28a745'; // Grün für abgeschlossen
+                                achievement.style.color = 'white'; // Weißer Text für besseren Kontrast
+                            } else {
+                                achievement.style.backgroundColor = '#f9f9f9'; // Grau für nicht abgeschlossen
+                                achievement.style.color = 'black'; // Schwarzer Text
+                            }
+                        });
+
+                        checkAllAchievementsUnlocked(); // Prüfen, ob "Sammelmeister" freigeschaltet wird
+
+                        // Level-Hintergründe aktualisieren
+                        document.querySelectorAll('.levelLink').forEach(level => {
+                            const levelId = level.id.match(/\d+/)[0]; // Extrahiere die Level-Nummer aus der ID (z. B. "1" aus "level1Link")
+                            if (localStorage.getItem(`level${levelId}Completed`) === 'true') {
+                                level.style.backgroundColor = '#28a745'; // Grün für abgeschlossenes Level
+                                level.style.color = 'white'; // Weißer Text für besseren Kontrast
+                            } else {
+                                level.style.backgroundColor = '#f9f9f9'; // Grau für nicht abgeschlossenes Level
+                                level.style.color = 'black'; // Schwarzer Text
+                            }
+                        });
+                    }
+
+
+
+            // Reset-Funktion
+            document.getElementById('resetPlatform').addEventListener('click', function () {
+                if (confirm('Möchtest du die Plattform wirklich zurücksetzen? Alle Fortschritte und Punkte werden gelöscht.')) {
+                    localStorage.clear();
+                    alert('Die Plattform wurde zurückgesetzt!');
+                    location.reload();
+                }
+            });
+
+            function checkAllAchievementsUnlocked() {
+                // Liste aller Achievements außer "Sammelmeister" (achievement7)
+                const achievementIds = ['achievement1', 'achievement2', 'achievement3', 'achievement4', 'achievement5', 'achievement6'];
+
+                // Überprüfen, ob alle Achievements freigeschaltet sind
+                const allUnlocked = achievementIds.every(id => localStorage.getItem(id) === 'true');
+
+                // Wenn alle freigeschaltet sind, schalte "Sammelmeister" frei
+                if (allUnlocked) {
+                    localStorage.setItem('achievement7', 'true'); // "Sammelmeister" freischalten
+                }
+            }
+
+
+            updateScoreDisplay();
+            updateAchievements();
+        });
+    </script>
 </body>
 </html>

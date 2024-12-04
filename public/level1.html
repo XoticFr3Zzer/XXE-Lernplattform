@@ -7,32 +7,120 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Punkteanzeige -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9;
+        padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
+
     <h1>Level 1: Einführung in XXE</h1>
     <p>In diesem Level wirst du lernen, was externe Entitäten sind und wie sie für Angriffe genutzt werden können.</p>
+    <p>Drücke auf Angriff starten um einen XXE Angriff zu simulieren</p>
 
-    <!-- Schritt 1 -->
-    <h2>Schritt 1: Was sind externe Entitäten?</h2>
-    <p>Externe Entitäten in XML ermöglichen es, Daten von außerhalb eines XML-Dokuments zu referenzieren. Dies kann für legitime Zwecke, aber auch für Angriffe genutzt werden.</p>
-
-    <!-- Schritt 2 -->
-    <h2>Schritt 2: Definiere eine externe Entität</h2>
-    <p>Im folgendem Beispiel siehst du, wie die Entität <code>&ext;</code> so definiert wird, dass sie auf die Datei <code>/etc/passwd</code> verweist.</p>
+    <!-- Aufgabe -->
     <textarea id="xmlInput1" rows="10" cols="50">
 <?xml version="1.0"?>
 <!DOCTYPE exploit [
     <!ENTITY ext SYSTEM "file:///etc/passwd">
 ]>
 <request>&ext;</request>
-    </textarea>
+</textarea>
 
-    <!-- Angriff starten -->
+    <!-- Buttons -->
     <button id="runAttackBtnLevel1">Angriff starten</button>
+    <button id="showSolutionBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #ffc107; color: black; border: none; border-radius: 5px;">
+        Musterlösung anzeigen (Abzug: 100 Punkte)
+    </button>
 
-    <!-- Ausgabe -->
-    <h2>Schritt 3: Ergebnis des Angriffs</h2>
-    <p>Die Datei <code>/etc/passwd</code> enthält kritische Informationen, wie Benutzernamen und IDs. Die Ergebnisse des Angriffs werden hier angezeigt:</p>
-    <pre id="resultLevel1"></pre>
+    <!-- Erklärung Button -->
+    <button id="toggleExplanationBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Erklärung anzeigen
+    </button>
+    <div id="explanationContent" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+        <strong>Erklärung:</strong>
+        <p> Im gezeigten Beispiel wird ein externer XML-Datensatz (Entity) namens ext definiert, der auf eine lokale Datei verweist, in diesem Fall file:///etc/passwd. Diese Datei enthält sensible Informationen über Benutzerkonten in einem Unix- oder Linux-System.
+            Wenn ein XML-Parser, der nicht sicher konfiguriert ist, das Dokument verarbeitet, wird die externe Entity <code> &ext; </code> aufgelöst.
+            Das bedeutet, der Parser greift auf die Datei /etc/passwd zu, liest deren Inhalt und fügt ihn an der Stelle von <code> &ext; </code> in die XML-Nachricht ein.
+            Dies ermöglicht es einem Angreifer, durch eine einfache Manipulation des XML-Dokuments unautorisiert auf Dateien oder Systeme zuzugreifen, was zu einer Datenexfiltration führen kann.
+            Der Angriff entsteht durch eine fehlerhafte Konfiguration des XML-Parsers, der externe Entitäten nicht deaktiviert oder einschränkt. Angreifer können diese Technik nutzen, um beliebige Dateien auszulesen oder über Protokolle wie HTTP oder FTP weitere Aktionen durchzuführen.
+            Um solche Angriffe zu verhindern, sollte die Verarbeitung externer Entitäten strikt deaktiviert oder nur auf vertrauenswürdige Quellen beschränkt werden.
+        </p>
+    </div>
 
-    <script src="script.js"></script>
+
+    <!-- Ergebnis -->
+    <textarea id="attackOutput" rows="5" cols="50" readonly></textarea>
+
+    <!-- Zurück -->
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px;">
+        Zurück zur Hauptseite
+    </button>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                }
+            }
+
+            // Check if Level is already completed
+            const levelCompleted = localStorage.getItem('level1Completed') === 'true';
+            if (levelCompleted) {
+                document.getElementById('runAttackBtnLevel1').disabled = true;
+                document.getElementById('attackOutput').value = 'Level bereits abgeschlossen!';
+            }
+
+            // Angriff starten
+            document.getElementById('runAttackBtnLevel1').addEventListener('click', function () {
+                const userInput = document.getElementById('xmlInput1').value.trim();
+                const expectedInput = `
+<?xml version="1.0"?>
+<!DOCTYPE exploit [
+    <!ENTITY ext SYSTEM "file:///etc/passwd">
+]>
+<request>&ext;</request>`.trim();
+
+                const attackOutput = document.getElementById('attackOutput');
+                if (userInput === expectedInput) {
+                    attackOutput.value = 'Erfolgreicher Angriff! Zugriff auf die Datei /etc/passwd wurde gewährt.';
+                    score += 100;
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('level1Completed', 'true');
+                    localStorage.setItem('achievement1', 'true'); // Unlock Achievement
+                    document.getElementById('runAttackBtnLevel1').disabled = true;
+                } else {
+                    attackOutput.value = 'Fehler: Der Angriff war nicht erfolgreich.';
+                }
+                updateScoreDisplay();
+            });
+
+            // Musterlösung anzeigen
+            document.getElementById('showSolutionBtn').addEventListener('click', function () {
+                const solution = `
+<?xml version="1.0"?>
+<!DOCTYPE exploit [
+    <!ENTITY ext SYSTEM "file:///etc/passwd">
+]>
+<request>&ext;</request>`;
+                document.getElementById('attackOutput').value = solution;
+                score = Math.max(0, score - 100);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Erklärung anzeigen/ausblenden
+            document.getElementById('toggleExplanationBtn').addEventListener('click', function () {
+                const explanation = document.getElementById('explanationContent');
+                explanation.style.display = explanation.style.display === 'none' ? 'block' : 'none';
+            });
+
+            updateScoreDisplay();
+        });
+    </script>
 </body>
 </html>
