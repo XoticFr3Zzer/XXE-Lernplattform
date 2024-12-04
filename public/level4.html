@@ -3,34 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXE Lernplattform - Level 4</title>
+    <title>Level 4: Sicherheitsmaßnahmen gegen XXE</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Level 4: Remote Code Execution (RCE) Angriff</h1>
-    <p>In diesem Level wirst du lernen, wie eine externe Entität verwendet wird, um Code auszuführen oder auf eine schädliche Ressource zuzugreifen.</p>
+    <!-- Punkteanzeige -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9;
+        padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
 
-    <!-- Aufgabe -->
+    <h1>Level 4: Sicherheitsmaßnahmen gegen XXE</h1>
+    <p>Zeige dein Wissen über Sicherheitsmaßnahmen gegen XXE-Angriffe, indem du drei verschiedene Abwehrmethoden nennst.</p>
+
     <h2>Deine Aufgabe</h2>
-    <p>Definiere eine externe Entität, die auf die URL <code>http://attacker.com/malicious_script.php</code> verweist.</p>
-    <textarea id="xmlInput4" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+    <p>Gib drei Abwehrmethoden gegen XXE-Angriffe an:</p>
+    <div>
+        <label for="method1">Abwehrmethode 1:</label>
+        <input type="text" id="method1" placeholder="Erste Abwehrmethode"><br><br>
+        <label for="method2">Abwehrmethode 2:</label>
+        <input type="text" id="method2" placeholder="Zweite Abwehrmethode"><br><br>
+        <label for="method3">Abwehrmethode 3:</label>
+        <input type="text" id="method3" placeholder="Dritte Abwehrmethode"><br><br>
+    </div>
 
-    <!-- Tipps -->
     <h3>Tipps</h3>
-    <button id="tip1">Tipp 1</button>
-    <button id="tip2">Tipp 2</button>
-    <button id="tip3">Tipp 3</button>
-    <div id="tip1-box" style="display:none;">Ein RCE Angriff lädt externen Code von einer URL.</div>
-    <div id="tip2-box" style="display:none;">Syntax für die Entität: <code>&lt;!ENTITY name SYSTEM "URL"&gt;</code>.</div>
-    <div id="tip3-box" style="display:none;">Nutze die URL: <code>http://attacker.com/malicious_script.php</code>.</div>
+    <button id="toggleTip1">Tipp 1 anzeigen</button>
+    <div id="tipContent1" class="tip-box" style="display: none;">Deaktiviere Funktionen, die Angriffe ermöglichen, z. B. DTDs.</div>
 
-    <!-- Angriff starten -->
-    <button id="runAttackBtnLevel4">Angriff starten</button>
+    <button id="toggleTip2">Tipp 2 anzeigen</button>
+    <div id="tipContent2" class="tip-box" style="display: none;">Nutze Parser, die keine externen Entitäten zulassen.</div>
 
-    <!-- Ergebnis -->
-    <h3>Angriffsoutput:</h3>
-    <pre id="resultLevel4"></pre>
+    <button id="toggleTip3">Tipp 3 anzeigen</button>
+    <div id="tipContent3" class="tip-box" style="display: none;">Validiere Benutzereingaben, um Angriffe zu vermeiden.</div>
 
-    <script src="script.js"></script>
+    <button id="runValidationBtnLevel4">Überprüfung starten</button>
+    <button id="showSolutionBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #ffc107; color: black; border: none; border-radius: 5px;">
+        Musterlösung anzeigen (Abzug: 100 Punkte)
+    </button>
+
+
+    <!-- Erklärung Button -->
+    <button id="toggleExplanationBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Erklärung anzeigen
+    </button>
+    <div id="explanationContent" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+        <strong>Erklärung:</strong>
+        <p>Disable DTD: Das Deaktivieren von DTDs verhindert, dass XML-Dokumente externe oder gefährliche Definitionen laden können, wodurch die Angriffsfläche für XXE-Angriffe reduziert wird. </p>
+
+        <p>Disable External Entities: Das Deaktivieren externer Entitäten stellt sicher, dass keine unberechtigten externen Ressourcen oder Dateien referenziert werden können, was den Zugriff auf interne Daten verhindert.</p>
+
+        <p>Input Validation: Die Überprüfung und Bereinigung von Benutzereingaben blockiert potenziell schädliche XML-Inhalte, bevor sie verarbeitet werden, und schützt so vor Manipulationen. </p>
+
+        <p>Secure Parser: Sichere XML-Parser sind so konfiguriert, dass sie standardmäßig keine externen Entitäten laden, was eine einfache und effektive Sicherheitsmaßnahme ist.</p>
+
+        <p>Use JSON: Der Wechsel zu JSON eliminiert das Risiko von XXE-Angriffen vollständig, da JSON keine Entitäten oder externe Referenzen unterstützt.</p>
+    </div>
+
+
+
+    <h3>Ergebnisse:</h3>
+    <textarea id="attackOutput" rows="5" cols="50" readonly></textarea>
+
+    <!-- Zurück -->
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px;">
+        Zurück zur Hauptseite
+    </button>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                }
+            }
+
+            // Check if Level is already completed
+            const levelCompleted = localStorage.getItem('level4Completed') === 'true';
+            if (levelCompleted) {
+                document.getElementById('runValidationBtnLevel4').disabled = true;
+                document.getElementById('attackOutput').value = 'Level bereits abgeschlossen!';
+            }
+
+            // Angriff starten
+            document.getElementById('runValidationBtnLevel4').addEventListener('click', function () {
+                const method1 = document.getElementById('method1').value.trim().toLowerCase();
+                const method2 = document.getElementById('method2').value.trim().toLowerCase();
+                const method3 = document.getElementById('method3').value.trim().toLowerCase();
+
+                const validMethods = ["disable dtd", "disable external entities", "input validation", "secure parser", "use json"];
+                const userMethods = [method1, method2, method3];
+                const correctMethods = userMethods.filter(method => validMethods.includes(method));
+
+                const attackOutput = document.getElementById('attackOutput');
+                if (correctMethods.length >= 3) {
+                    attackOutput.value = 'Erfolgreich! Du hast drei gültige Sicherheitsmaßnahmen gegen XXE-Angriffe angegeben.';
+                    score += 100;
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('level4Completed', 'true');
+                    localStorage.setItem('achievement4', 'true'); // Unlock Achievement
+                    document.getElementById('runValidationBtnLevel4').disabled = true;
+                } else {
+                    attackOutput.value = 'Fehler: Nicht alle Methoden sind korrekt. Überprüfe deine Eingaben.';
+                }
+                updateScoreDisplay();
+            });
+
+            // Tipps anzeigen
+            document.getElementById('toggleTip1').addEventListener('click', function () {
+                const tip = document.getElementById('tipContent1');
+                tip.style.display = tip.style.display === 'none' ? 'block' : 'none';
+                score = Math.max(0, score - 10); // Punkteabzug für Tipps
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            document.getElementById('toggleTip2').addEventListener('click', function () {
+                const tip = document.getElementById('tipContent2');
+                tip.style.display = tip.style.display === 'none' ? 'block' : 'none';
+                score = Math.max(0, score - 10);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            document.getElementById('toggleTip3').addEventListener('click', function () {
+                const tip = document.getElementById('tipContent3');
+                tip.style.display = tip.style.display === 'none' ? 'block' : 'none';
+                score = Math.max(0, score - 10);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Musterlösung anzeigen
+            document.getElementById('showSolutionBtn').addEventListener('click', function () {
+                const solution = `Gültige Sicherheitsmaßnahmen:
+1. Disable DTD
+2. Disable external entities
+3. Input validation
+4. Secure parser
+5. Use JSON`;
+                document.getElementById('attackOutput').value = solution;
+                score = Math.max(0, score - 100); // 100 Punkte Abzug für Musterlösung
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Erklärung anzeigen/ausblenden nur bei abgeschlossenem Level
+            document.getElementById('toggleExplanationBtn').addEventListener('click', function () {
+                const explanation = document.getElementById('explanationContent');
+                const levelCompleted = localStorage.getItem('level4Completed') === 'true';
+
+                if (levelCompleted) {
+                    explanation.style.display = explanation.style.display === 'none' ? 'block' : 'none';
+                } else {
+                    alert("Beende das Level, um die Erklärung anzusehen!");
+                }
+            });
+
+
+            updateScoreDisplay();
+        });
+    </script>
 </body>
 </html>

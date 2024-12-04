@@ -3,34 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXE Lernplattform - Level 2</title>
+    <title>Level 2: Billion Laugh Angriff</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Punkteanzeige -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9;
+        padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
+
     <h1>Level 2: Billion Laugh Angriff</h1>
     <p>In diesem Level wirst du lernen, wie der Billion Laugh Angriff einen Denial-of-Service (DoS) auslösen kann.</p>
 
-    <h2>Deine Aufgabe</h2>
-    <p>Füge den fehlenden Teil im XML-Code ein, um den Angriff erfolgreich auszuführen:</p>
-    <textarea id="xmlInput2" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+    <!-- Aufgabe -->
+    <textarea id="xmlInput2" rows="10" cols="50">
+<?xml version="1.0"?>
+<!DOCTYPE lolz [
+    <!-- Dein Code hier -->
+</textarea>
 
-    <!-- Tipps -->
-    <h3>Tipps</h3>
-    <button id="tip1">Tipp 1</button>
-    <button id="tip2">Tipp 2</button>
-    <button id="tip3">Tipp 3</button>
-    <div id="tip1-box" style="display:none;">Der Angriff nutzt rekursive Entitäten.</div>
-    <div id="tip2-box" style="display:none;">Definiere die Entitäten korrekt: <code>&lt;!ENTITY lol4 ...&gt;</code>.</div>
-    <div id="tip3-box" style="display:none;">Achte auf die Reihenfolge der Verschachtelung.</div>
-
-    <!-- Angriff starten -->
+    <!-- Buttons -->
     <button id="runAttackBtnLevel2">Angriff starten</button>
+    <button id="showSolutionBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #ffc107; color: black; border: none; border-radius: 5px;">
+        Musterlösung anzeigen (Abzug: 100 Punkte)
+    </button>
+
+    <!-- Erklärung Button -->
+    <button id="toggleExplanationBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Erklärung anzeigen
+    </button>
+    <div id="explanationContent" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+        <strong>Erklärung:</strong>
+        <p>In diesem Fall wird eine sogenannte Billion Laughs Attack durchgeführt. Dabei wird eine Entität definiert, die rekursiv auf sich selbst verweist und dadurch eine exponentielle Expansion verursacht.
+            Wenn das XML-Dokument von einer Anwendung verarbeitet wird, führt dies zu einer enormen Belastung der Systemressourcen wie Speicher und Rechenleistung.
+            Dies kann dazu führen, dass das System abstürzt, nicht mehr reagiert oder andere Nutzer beeinträchtigt werden.
+            Der Angriff funktioniert, indem kleine Datenmengen in einem XML-Dokument so verschachtelt werden, dass sie während der Verarbeitung zu einer extrem großen Datenmenge expandieren.
+            Dadurch wird das System mit Daten überflutet, was einen Denial-of-Service (DoS) verursacht.
+            Solche Angriffe machen sich zunutze, dass die XML-Verarbeitung standardmäßig oft keine Einschränkungen für die Verarbeitung von Entitäten vorsieht.
+        </p>
+    </div>
+
+
 
     <!-- Ergebnis -->
-    <h3>Angriffsoutput:</h3>
-    <pre id="resultLevel2"></pre>
+    <textarea id="attackOutput" rows="5" cols="50" readonly></textarea>
 
-    <script src="script.js"></script>
+    <!-- Zurück -->
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px;">
+        Zurück zur Hauptseite
+    </button>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                }
+            }
+
+            // Check if Level is already completed
+            const levelCompleted = localStorage.getItem('level2Completed') === 'true';
+            if (levelCompleted) {
+                document.getElementById('runAttackBtnLevel2').disabled = true;
+                document.getElementById('attackOutput').value = 'Level bereits abgeschlossen!';
+            }
+
+            // Angriff starten
+            document.getElementById('runAttackBtnLevel2').addEventListener('click', function () {
+                const userInput = document.getElementById('xmlInput2').value.trim();
+                const expectedInput = `
+<?xml version="1.0"?>
+<!DOCTYPE lolz [
+  <!ENTITY lol "lol">
+  <!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+  <!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+  <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+  <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+]>
+<root>&lol4;</root>`.trim();
+
+                const attackOutput = document.getElementById('attackOutput');
+                if (userInput === expectedInput) {
+                    attackOutput.value = 'Erfolgreicher Angriff! Billion Laugh DoS ausgelöst.';
+                    score += 100;
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('level2Completed', 'true');
+                    localStorage.setItem('achievement2', 'true'); // Unlock Achievement
+                    document.getElementById('runAttackBtnLevel2').disabled = true;
+                } else {
+                    attackOutput.value = 'Fehler: Der Angriff war nicht erfolgreich.';
+                }
+                updateScoreDisplay();
+            });
+
+            // Musterlösung anzeigen
+            document.getElementById('showSolutionBtn').addEventListener('click', function () {
+                const solution = `
+<?xml version="1.0"?>
+<!DOCTYPE lolz [
+  <!ENTITY lol "lol">
+  <!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+  <!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+  <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+  <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+]>
+<root>&lol4;</root>`;
+                document.getElementById('attackOutput').value = solution;
+                score = Math.max(0, score - 100);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Erklärung anzeigen/ausblenden
+            document.getElementById('toggleExplanationBtn').addEventListener('click', function () {
+                const explanation = document.getElementById('explanationContent');
+                explanation.style.display = explanation.style.display === 'none' ? 'block' : 'none';
+            });
+
+            updateScoreDisplay();
+        });
+    </script>
 </body>
 </html>
-

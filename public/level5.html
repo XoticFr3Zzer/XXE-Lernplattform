@@ -3,43 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXE Lernplattform - Level 5</title>
+    <title>Level 5: Sicherheitsmaßnahmen im Parser</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Level 5: Sicherheitsmaßnahmen gegen XXE</h1>
-    <p>Zeige dein Wissen über XXE-Sicherheitsmaßnahmen, indem du drei verschiedene Abwehrmethoden nennst.</p>
+    <!-- Punkteanzeige -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9;
+        padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
+
+    <h1>Level 5: Sicherheitsmaßnahmen im Parser</h1>
+    <p>Passe den Parser an, um eine Sicherheitsmaßnahme gegen XXE umzusetzen.</p>
 
     <!-- Aufgabe -->
-    <h2>Deine Aufgabe</h2>
-    <p>Gib drei Abwehrmethoden gegen XXE-Angriffe an:</p>
+    <textarea id="codeInput" rows="10" cols="50" placeholder="Schreibe hier deinen Parser-Code..."></textarea>
 
-    <!-- Eingabefelder -->
-    <label for="answer1">Abwehrmethode 1:</label>
-    <input type="text" id="answer1" placeholder="Erste Abwehrmethode"><br>
+    <!-- Buttons -->
+    <button id="runValidationBtnLevel5">Überprüfung starten</button>
+    <button id="showSolutionBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #ffc107; color: black; border: none; border-radius: 5px;">
+        Musterlösung anzeigen (Abzug: 100 Punkte)
+    </button>
 
-    <label for="answer2">Abwehrmethode 2:</label>
-    <input type="text" id="answer2" placeholder="Zweite Abwehrmethode"><br>
-
-    <label for="answer3">Abwehrmethode 3:</label>
-    <input type="text" id="answer3" placeholder="Dritte Abwehrmethode"><br>
-
-    <!-- Tipps -->
-    <h3>Tipps</h3>
-    <button id="tip1">Tipp 1</button>
-    <button id="tip2">Tipp 2</button>
-    <button id="tip3">Tipp 3</button>
-    <div id="tip1-box" style="display:none;">Deaktiviere die Verarbeitung von externen Entitäten in deinem XML-Parser.</div>
-    <div id="tip2-box" style="display:none;">Validiere alle XML-Eingaben gründlich, bevor sie verarbeitet werden.</div>
-    <div id="tip3-box" style="display:none;">Verwende sichere Alternativen wie JSON anstelle von XML.</div>
-
-    <!-- Überprüfungsbutton -->
-    <button id="runAttackBtnLevel5">Überprüfung starten</button>
+    <!-- Erklärung Button -->
+    <button id="toggleExplanationBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Erklärung anzeigen
+    </button>
+    <div id="explanationContent" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+        <strong>Erklärung:</strong>
+        <p> Effektive Schutzmaßnahmen umfassen das Deaktivieren von DTDs (Document Type Definitions), die Implementierung von Schema-Validierungen oder die Konvertierung von XML in JSON, da JSON keine externen Entitäten unterstützt.
+            Ziel ist es, einen Parser-Code zu erstellen, der solche Angriffe verhindert und somit die Sicherheit der Datenverarbeitung gewährleistet.</p>
+    </div>
 
     <!-- Ergebnis -->
-    <h3>Ergebnisse:</h3>
-    <pre id="resultLevel5"></pre>
+    <textarea id="attackOutput" rows="5" cols="50" readonly></textarea>
 
-    <script src="script.js"></script>
+    <!-- Zurück -->
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px;">
+        Zurück zur Hauptseite
+    </button>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                }
+            }
+
+            // Check if Level is already completed
+            const levelCompleted = localStorage.getItem('level5Completed') === 'true';
+            if (levelCompleted) {
+                document.getElementById('runValidationBtnLevel5').disabled = true;
+                document.getElementById('attackOutput').value = 'Level bereits abgeschlossen!';
+            }
+
+            // Angriff starten
+            document.getElementById('runValidationBtnLevel5').addEventListener('click', function () {
+                const userCode = document.getElementById('codeInput').value.trim();
+                const validSolutions = [
+                    'factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);',
+                    "schema = xmlschema.XMLSchema('schema.xsd')\nif not schema.is_valid('input.xml'):\n    raise ValueError(\"Ungueltiges XML-Dokument\")",
+                    "import xmltodict\nimport json\n\nwith open('input.xml', 'r') as xml_file:\n    data_dict = xmltodict.parse(xml_file.read())\n    json_data = json.dumps(data_dict)\n\nwith open('output.json', 'w') as json_file:\n    json_file.write(json_data)"
+                ];
+
+                const attackOutput = document.getElementById('attackOutput');
+                if (validSolutions.some(solution => userCode.includes(solution))) {
+                    attackOutput.value = 'Erfolgreich! Dein Parser-Code enthält eine korrekte Sicherheitsmaßnahme gegen XXE-Angriffe.';
+                    score += 100;
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('level5Completed', 'true');
+                    localStorage.setItem('achievement5', 'true'); // Unlock Achievement
+                    document.getElementById('runValidationBtnLevel5').disabled = true;
+                } else {
+                    attackOutput.value = 'Fehler: Dein Parser-Code enthält keine gültige Sicherheitsmaßnahme.';
+                }
+                updateScoreDisplay();
+            });
+
+            // Musterlösung anzeigen
+            document.getElementById('showSolutionBtn').addEventListener('click', function () {
+                const solution = `
+Disable DTD:
+factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+Verwendung von Schema-Validierung:
+import xmlschema
+schema = xmlschema.XMLSchema('schema.xsd')
+if not schema.is_valid('input.xml'):
+    raise ValueError("Ungueltiges XML-Dokument")
+
+Konvertierung in JSON:
+import xmltodict
+import json
+
+with open('input.xml', 'r') as xml_file:
+    data_dict = xmltodict.parse(xml_file.read())
+    json_data = json.dumps(data_dict)
+
+with open('output.json', 'w') as json_file:
+    json_file.write(json_data)`;
+                document.getElementById('attackOutput').value = solution;
+                score = Math.max(0, score - 100);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Erklärung anzeigen/ausblenden
+            document.getElementById('toggleExplanationBtn').addEventListener('click', function () {
+                const explanation = document.getElementById('explanationContent');
+                explanation.style.display = explanation.style.display === 'none' ? 'block' : 'none';
+            });
+
+
+            updateScoreDisplay();
+        });
+    </script>
 </body>
 </html>

